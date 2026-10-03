@@ -1,0 +1,10 @@
+- Bussiness Requirements
+- Technical Details
+- Color Scheme
+- Fonts
+- Testing Methodology
+- Documentation
+- Deployment Plan
+- Dtabase Schema
+- Coding Prefrence8
+- Final Output Format
