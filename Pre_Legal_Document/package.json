@@ -1,0 +1,51 @@
+{
+  "name": "pre-legal-document-generator",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A modern SaaS platform for preparing professional pre-legal document drafts through reusable templates, guided forms, optional AI assistance, and secure document management.",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "db:generate": "turbo run db:generate --filter=@prelegal/database",
+    "db:migrate": "turbo run db:migrate --filter=@prelegal/database",
+    "db:seed": "turbo run db:seed --filter=@prelegal/database",
+    "db:studio": "turbo run db:studio --filter=@prelegal/database",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md,yml,yaml}\"",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "husky": "^9.0.11",
+    "prettier": "^3.2.5",
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@9.1.4",
+  "keywords": [
+    "legal",
+    "documents",
+    "templates",
+    "saas",
+    "nextjs",
+    "react",
+    "typescript"
+  ],
+  "author": "Pre Legal Document Generator Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/pre-legal-document-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/pre-legal-document-generator/issues"
+  },
+  "homepage": "https://github.com/your-org/pre-legal-document-generator#readme"
+}

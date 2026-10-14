@@ -1,0 +1,75 @@
+{
+    email {$EMAIL}
+    admin off
+}
+
+{$DOMAIN} {
+    encode zstd gzip
+
+    # Security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        -Server
+    }
+
+    # Rate limiting
+    @api {
+        path /api/*
+    }
+    rate_limit @api {
+        zone api 10r/s
+        key {remote_host}
+    }
+
+    @auth {
+        path /auth/*
+    }
+    rate_limit @auth {
+        zone auth 5r/s
+        key {remote_host}
+    }
+
+    # Health check bypass rate limiting
+    @health {
+        path /api/health
+    }
+
+    # Reverse proxy to app
+    reverse_proxy app:3000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        transport http {
+            read_timeout 30s
+            write_timeout 30s
+        }
+    }
+
+    # Static files caching
+    @static {
+        path /_next/static/*
+        path /public/*
+    }
+    header @static {
+        Cache-Control "public, max-age=31536000, immutable"
+    }
+
+    # API routes - no caching
+    @no_cache {
+        path /api/*
+    }
+    header @no_cache {
+        Cache-Control "no-store, no-cache, must-revalidate"
+    }
+}
+
+# www redirect
+www.{$DOMAIN} {
+    redir https://{$DOMAIN}{uri} permanent
+}

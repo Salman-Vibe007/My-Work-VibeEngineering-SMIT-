@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@prelegal/shared/*": ["packages/shared/src/*"],
+      "@prelegal/validation/*": ["packages/validation/src/*"],
+      "@prelegal/ui/*": ["packages/ui/src/*"],
+      "@prelegal/template-engine/*": ["packages/template-engine/src/*"],
+      "@prelegal/document-engine/*": ["packages/document-engine/src/*"],
+      "@prelegal/database/*": ["packages/database/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "**/dist", "**/build", "**/.next"]
+}
