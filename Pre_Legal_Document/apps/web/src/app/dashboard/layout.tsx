@@ -4,7 +4,7 @@ import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Button, Avatar, AvatarFallback, AvatarImage, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel } from '@prelegal/ui'
-import { LayoutDashboard, FileText, Settings, LogOut, User, Bell, ChevronDown } from 'lucide-react'
+import { LayoutDashboard, FileText, Settings, LogOut, User, Bell } from 'lucide-react'
 import { cn } from '@prelegal/shared'
 
 const navigation = [
@@ -92,3 +92,13 @@ export default function DashboardLayout({
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign out
                 </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">{children}</main>
+    </div>
+  )
+}

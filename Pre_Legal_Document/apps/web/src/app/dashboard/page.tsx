@@ -3,7 +3,7 @@
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Button, Card, CardHeader, CardTitle, CardContent, CardFooter, Badge } from '@prelegal/ui'
-import { FileText, Plus, Clock, Eye, Download, Trash2, ExternalLink, MoreHorizontal } from 'lucide-react'
+import { FileText, Plus, Clock, Eye, Download, ExternalLink, MoreHorizontal } from 'lucide-react'
 import { formatRelativeTime } from '@prelegal/shared'
 
 const mockDocuments = [

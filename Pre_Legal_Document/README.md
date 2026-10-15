@@ -429,73 +429,48 @@ jobs justify it.
                  External adapters: Email, Billing, AI, E-signatures
 ```
 
-## Suggested repository structure
+## Frontend and backend layout
 
-This is illustrative; adapt it to the actual framework, package manager,
-and deployment approach.
+The workspace keeps the browser application and background processing in
+separate app folders. The Next.js app also owns its HTTP API routes as a
+modular-monolith backend; the worker handles asynchronous PDF and DOCX
+exports. Shared business logic lives in `packages/`.
 
 ``` text
 pre-legal-document-generator/
 ├── apps/
 │   ├── web/
-│   │   ├── app/
-│   │   │   ├── (marketing)/
-│   │   │   ├── (auth)/
-│   │   │   ├── dashboard/
-│   │   │   ├── documents/
-│   │   │   ├── templates/
-│   │   │   ├── billing/
-│   │   │   ├── settings/
-│   │   │   └── admin/
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   ├── lib/
-│   │   └── tests/
+│   │   └── src/
+│   │       ├── app/            # Frontend pages and /api route handlers
+│   │       ├── components/
+│   │       ├── lib/
+│   │       └── types/
 │   └── worker/
-│       ├── jobs/
-│       └── services/
+│       ├── src/                # Redis/BullMQ worker and export processor
+│       └── tests/
 ├── packages/
 │   ├── database/
 │   │   ├── prisma/
-│   │   └── migrations/
+│   │   └── src/
 │   ├── document-engine/
 │   ├── template-engine/
 │   ├── ui/
 │   ├── validation/
 │   └── shared/
-├── templates/
-│   ├── business/
-│   ├── employment/
-│   ├── personal/
-│   └── general/
 ├── docker/
-│   ├── app/
-│   └── proxy/
 ├── docs/
-│   ├── architecture.md
-│   ├── deployment.md
-│   ├── security.md
-│   ├── template-authoring.md
-│   ├── api.md
-│   └── backup-restore.md
 ├── scripts/
 ├── .github/workflows/
 ├── .env.example
-├── .dockerignore
-├── .gitignore
 ├── compose.yaml
-├── Dockerfile
-├── package.json
 ├── pnpm-workspace.yaml
 ├── pnpm-lock.yaml
-├── README.md
-├── CONTRIBUTING.md
-├── CHANGELOG.md
-└── LICENSE
+└── package.json
 ```
 
-Only retain workspace files and directories that are actually used by
-the project.
+The API route handlers remain in the web app so authenticated browser
+requests can share NextAuth sessions. The worker can be run separately
+with `pnpm --filter @prelegal/worker dev` and requires `REDIS_URL`.
 
 ## Database design
 

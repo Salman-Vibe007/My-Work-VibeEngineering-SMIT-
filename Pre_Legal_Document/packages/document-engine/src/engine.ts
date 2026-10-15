@@ -1,5 +1,6 @@
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, PageBreak } from 'docx'
-import type { RenderedSection, RenderResult } from '@prelegal/template-engine'
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx'
+import type { RenderResult, TemplateEngine } from '@prelegal/template-engine'
+import type { TemplateSchema } from '@prelegal/shared'
 import { createTemplateEngine } from '@prelegal/template-engine'
 
 export interface DocumentExportOptions {
@@ -107,7 +108,7 @@ export class DocumentEngine {
     const sectionsHtml = renderResult.sections
       .map(
         (section) => `
-        <section class="document-section" data-section-id="${section.id}">
+        <section class="document-section" data-section-id="${this.escapeHtml(section.id)}">
           <h1 class="section-title">${this.escapeHtml(section.title)}</h1>
           <div class="section-content">${this.formatContent(section.content)}</div>
         </section>
@@ -139,9 +140,14 @@ export class DocumentEngine {
   }
 
   private escapeHtml(text: string): string {
-    const div = document.createElement('div')
-    div.textContent = text
-    return div.innerHTML
+    const replacements: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    }
+    return text.replace(/[&<>"']/g, (character) => replacements[character])
   }
 
   private formatContent(content: string): string {
@@ -215,22 +221,22 @@ export function createDocumentEngine(): DocumentEngine {
 }
 
 export class DocumentService {
-  private templateEngine = createTemplateEngine({} as any)
+  private templateEngine: TemplateEngine | undefined
 
-  setTemplateSchema(schema: any) {
+  setTemplateSchema(schema: TemplateSchema): void {
     this.templateEngine = createTemplateEngine(schema)
   }
 
   renderDocument(formData: Record<string, unknown>): RenderResult {
-    return this.templateEngine.render(formData)
+    return this.getTemplateEngine().render(formData)
   }
 
   validateFormData(formData: Record<string, unknown>) {
-    return this.templateEngine.validateFormData(formData)
+    return this.getTemplateEngine().validateFormData(formData)
   }
 
   getDefaultFormData() {
-    return this.templateEngine.getDefaultFormData()
+    return this.getTemplateEngine().getDefaultFormData()
   }
 
   async exportToDOCX(options: DocumentExportOptions): Promise<Uint8Array> {
@@ -241,6 +247,13 @@ export class DocumentService {
   exportToHTML(renderResult: RenderResult, title: string): string {
     const engine = createDocumentEngine()
     return engine.generateHTML(renderResult, title)
+  }
+
+  private getTemplateEngine(): TemplateEngine {
+    if (!this.templateEngine) {
+      throw new Error('Template schema must be configured before rendering documents')
+    }
+    return this.templateEngine
   }
 }
 

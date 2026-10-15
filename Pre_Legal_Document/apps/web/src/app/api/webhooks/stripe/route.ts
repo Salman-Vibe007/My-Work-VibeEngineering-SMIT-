@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
-import { prisma } from '@prelegal/database'
+import { prisma, SubscriptionStatus } from '@prelegal/database'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.PAYMENT_SECRET_KEY!, {
-  apiVersion: '2024-04-10',
-})
-
-const webhookSecret = process.env.PAYMENT_WEBHOOK_SECRET!
+function getStripeClient(): Stripe {
+  const secret = process.env.PAYMENT_SECRET_KEY
+  if (!secret) {
+    throw new Error('PAYMENT_SECRET_KEY must be configured to process billing webhooks')
+  }
+  return new Stripe(secret, { apiVersion: '2023-10-16' })
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +20,12 @@ export async function POST(request: NextRequest) {
     if (!signature) {
       return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 })
     }
+
+    const webhookSecret = process.env.PAYMENT_WEBHOOK_SECRET
+    if (!webhookSecret) {
+      throw new Error('PAYMENT_WEBHOOK_SECRET must be configured to process billing webhooks')
+    }
+    const stripe = getStripeClient()
 
     let event: Stripe.Event
 
@@ -56,7 +64,7 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
-        await handleCheckoutCompleted(session)
+        await handleCheckoutCompleted(stripe, session)
         break
       }
       case 'customer.subscription.created':
@@ -95,14 +103,20 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+async function handleCheckoutCompleted(stripe: Stripe, session: Stripe.Checkout.Session) {
   const userId = session.metadata?.userId
   const planId = session.metadata?.planId
   const organizationId = session.metadata?.organizationId
 
-  if (!userId && !organizationId) return
+  if (
+    (!userId && !organizationId) ||
+    typeof session.subscription !== 'string' ||
+    typeof session.customer !== 'string'
+  ) {
+    return
+  }
 
-  const subscription = await stripe.subscriptions.retrieve(session.subscription as string)
+  const subscription = await stripe.subscriptions.retrieve(session.subscription)
   const priceId = subscription.items.data[0]?.price.id
 
   const plan = await prisma.plan.findFirst({
@@ -169,8 +183,8 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
-  const subscriptionId = invoice.subscription as string
-  if (!subscriptionId) return
+  const subscriptionId = invoice.subscription
+  if (typeof subscriptionId !== 'string') return
 
   await prisma.subscription.updateMany({
     where: { stripeSubscriptionId: subscriptionId },
@@ -179,8 +193,8 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 }
 
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
-  const subscriptionId = invoice.subscription as string
-  if (!subscriptionId) return
+  const subscriptionId = invoice.subscription
+  if (typeof subscriptionId !== 'string') return
 
   await prisma.subscription.updateMany({
     where: { stripeSubscriptionId: subscriptionId },
@@ -188,7 +202,7 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
   })
 }
 
-function mapStripeStatus(status: Stripe.Subscription.Status): string {
+function mapStripeStatus(status: Stripe.Subscription.Status): SubscriptionStatus {
   switch (status) {
     case 'active':
       return 'ACTIVE'

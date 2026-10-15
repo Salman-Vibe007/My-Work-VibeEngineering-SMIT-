@@ -46,7 +46,7 @@ export const templateFieldSchema = z.object({
   helpText: z.string().optional(),
   validation: fieldValidationSchema.optional(),
   conditional: conditionalLogicSchema.optional(),
-}) satisfies z.ZodType<TemplateField>
+})
 
 export const templateSectionSchema = z.object({
   id: z.string().min(1).max(100),
@@ -82,7 +82,7 @@ export const templateSchemaSchema = z.object({
   }),
   fields: z.array(templateFieldSchema),
   sections: z.array(templateSectionSchema),
-}) satisfies z.ZodType<TemplateSchema>
+})
 
 export const templateCreateSchema = z.object({
   slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/),
@@ -129,7 +129,7 @@ export const documentUpdateSchema = z.object({
 })
 
 export const userRegisterSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().email(),
   password: z.string().min(8).max(128),
   name: z.string().min(1).max(100).optional(),
   locale: z.string().length(2).default('en'),
@@ -137,7 +137,7 @@ export const userRegisterSchema = z.object({
 })
 
 export const userLoginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().email(),
   password: z.string().min(1),
   rememberMe: z.boolean().optional(),
 })

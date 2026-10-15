@@ -63,7 +63,7 @@ export default function SignUpPage() {
         return
       }
 
-      router.push('/auth/signin?registered=true')
+      router.push('/signin?registered=true')
     } catch {
       setFormError('An error occurred. Please try again.')
     } finally {
@@ -198,7 +198,7 @@ export default function SignUpPage() {
         <CardFooter className="flex flex-col items-center gap-2">
           <p className="text-sm text-text-secondary">
             Already have an account?{' '}
-            <Link href="/auth/signin" className="text-primary-600 hover:underline font-medium">
+            <Link href="/signin" className="text-primary-600 hover:underline font-medium">
               Sign in
             </Link>
           </p>

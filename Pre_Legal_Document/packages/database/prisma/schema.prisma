@@ -93,6 +93,7 @@ model User {
   usageRecords    UsageRecord[]
   subscriptions   Subscription[]
   auditLogs       AuditLog[]
+  reviewedTemplates Template[]     @relation("TemplateReviewer")
 
   @@index([email])
   @@index([role])
@@ -149,6 +150,7 @@ model Organization {
   documents   Document[]
   templates   Template[]
   subscriptions Subscription[]
+  usageRecords UsageRecord[]
 
   @@index([ownerId])
   @@index([slug])
@@ -237,7 +239,7 @@ model Template {
 
   organizationId  String?
   organization    Organization?    @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  reviewedBy      User?            @relation(fields: [reviewedById], references: [id])
+  reviewedBy      User?            @relation("TemplateReviewer", fields: [reviewedById], references: [id])
 
   versions        TemplateVersion[]
   documents       Document[]
@@ -263,6 +265,7 @@ model TemplateVersion {
   createdAt       DateTime @default(now())
 
   template        Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  documents       Document[]
 
   @@unique([templateId, version])
   @@index([templateId])
@@ -276,7 +279,7 @@ model Document {
   organizationId      String?
   templateId          String
   templateVersionId   String
-  currentVersionId    String?
+  currentVersionId    String?        @unique
   jurisdictionCountry String
   jurisdictionRegion  String?
   isFavorite          Boolean        @default(false)
@@ -318,6 +321,7 @@ model DocumentVersion {
   createdAt       DateTime @default(now())
 
   document        Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  currentDocument Document? @relation("DocumentCurrentVersion")
   author          User     @relation("DocumentVersionAuthor", fields: [authorId], references: [id])
 
   @@unique([documentId, version])

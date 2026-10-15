@@ -2,7 +2,7 @@ import Handlebars from 'handlebars'
 import type { TemplateSchema, TemplateField, TemplateSection } from '@prelegal/shared'
 import { templateSchemaSchema } from '@prelegal/validation'
 
-Handlebars.registerHelper('if', function (conditional, options) {
+Handlebars.registerHelper('if', function (this: Record<string, unknown>, conditional, options) {
   if (typeof conditional === 'function') {
     conditional = conditional(this)
   }
@@ -12,7 +12,7 @@ Handlebars.registerHelper('if', function (conditional, options) {
   return options.inverse(this)
 })
 
-Handlebars.registerHelper('unless', function (conditional, options) {
+Handlebars.registerHelper('unless', function (this: Record<string, unknown>, conditional, options) {
   if (typeof conditional === 'function') {
     conditional = conditional(this)
   }
@@ -22,42 +22,42 @@ Handlebars.registerHelper('unless', function (conditional, options) {
   return options.inverse(this)
 })
 
-Handlebars.registerHelper('eq', function (a, b, options) {
+Handlebars.registerHelper('eq', function (this: Record<string, unknown>, a, b, options) {
   if (a === b) {
     return options.fn(this)
   }
   return options.inverse(this)
 })
 
-Handlebars.registerHelper('neq', function (a, b, options) {
+Handlebars.registerHelper('neq', function (this: Record<string, unknown>, a, b, options) {
   if (a !== b) {
     return options.fn(this)
   }
   return options.inverse(this)
 })
 
-Handlebars.registerHelper('gt', function (a, b, options) {
+Handlebars.registerHelper('gt', function (this: Record<string, unknown>, a, b, options) {
   if (a > b) {
     return options.fn(this)
   }
   return options.inverse(this)
 })
 
-Handlebars.registerHelper('lt', function (a, b, options) {
+Handlebars.registerHelper('lt', function (this: Record<string, unknown>, a, b, options) {
   if (a < b) {
     return options.fn(this)
   }
   return options.inverse(this)
 })
 
-Handlebars.registerHelper('and', function (a, b, options) {
+Handlebars.registerHelper('and', function (this: Record<string, unknown>, a, b, options) {
   if (a && b) {
     return options.fn(this)
   }
   return options.inverse(this)
 })
 
-Handlebars.registerHelper('or', function (a, b, options) {
+Handlebars.registerHelper('or', function (this: Record<string, unknown>, a, b, options) {
   if (a || b) {
     return options.fn(this)
   }
@@ -94,7 +94,7 @@ export class TemplateEngine {
     if (!this.compiledTemplates.has(content)) {
       const template = Handlebars.compile(content, {
         noEscape: true,
-        strict: true,
+        strict: false,
       })
       this.compiledTemplates.set(content, template)
     }
@@ -117,9 +117,11 @@ export class TemplateEngine {
       case 'notContains':
         return !String(fieldValue || '').includes(String(value))
       case 'isEmpty':
-        return !fieldValue || (Array.isArray(fieldValue) && fieldValue.length === 0) || fieldValue === ''
+        return fieldValue === undefined || fieldValue === null || fieldValue === '' ||
+          (Array.isArray(fieldValue) && fieldValue.length === 0)
       case 'isNotEmpty':
-        return !!fieldValue && !(Array.isArray(fieldValue) && fieldValue.length === 0) && fieldValue !== ''
+        return fieldValue !== undefined && fieldValue !== null && fieldValue !== '' &&
+          !(Array.isArray(fieldValue) && fieldValue.length === 0)
       default:
         return true
     }
@@ -168,6 +170,10 @@ export class TemplateEngine {
     const renderedSections: RenderedSection[] = []
 
     for (const field of this.schema.fields) {
+      if (!this.evaluateCondition(field.conditional, formData)) {
+        continue
+      }
+
       const value = formData[field.name]
       if (field.required && (value === undefined || value === null || value === '')) {
         missingFields.push(field.name)
@@ -179,20 +185,13 @@ export class TemplateEngine {
       }
     }
 
-    for (const section of this.schema.sections.sort((a, b) => a.order - b.order)) {
+    for (const section of [...this.schema.sections].sort((a, b) => a.order - b.order)) {
       if (!this.evaluateCondition(section.conditional, formData)) {
         continue
       }
 
       const template = this.getCompiledTemplate(section.content)
-      let content: string
-
-      try {
-        content = template(formData)
-      } catch (error) {
-        content = `[Error rendering section "${section.title}": ${error instanceof Error ? error.message : 'Unknown error'}]`
-        warnings.push(`Failed to render section "${section.title}"`)
-      }
+      const content = template(formData)
 
       renderedSections.push({
         id: section.id,
@@ -228,6 +227,10 @@ export class TemplateEngine {
     const errors: Record<string, string> = {}
 
     for (const field of this.schema.fields) {
+      if (!this.evaluateCondition(field.conditional, formData)) {
+        continue
+      }
+
       const value = formData[field.name]
       const validation = this.validateField(field, value)
       if (!validation.valid) {

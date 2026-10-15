@@ -1,14 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: [
-    '@prelegal/ui',
-    '@prelegal/shared',
-    '@prelegal/validation',
-    '@prelegal/template-engine',
-    '@prelegal/document-engine',
-    '@prelegal/database',
-  ],
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
@@ -22,7 +14,7 @@ const nextConfig = {
       },
     ],
   },
-  output: 'standalone',
+  output: process.platform === 'win32' ? undefined : 'standalone',
   poweredByHeader: false,
   compress: true,
 }

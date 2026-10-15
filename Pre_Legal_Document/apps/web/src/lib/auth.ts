@@ -10,7 +10,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: 'jwt' },
   pages: {
-    signIn: '/auth/signin',
+    signIn: '/signin',
     error: '/auth/error',
   },
   providers: [
@@ -28,7 +28,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!parsed.success) return null
 
         const user = await prisma.user.findUnique({
-          where: { email: parsed.data.email },
+          where: { email: parsed.data.email.trim().toLowerCase() },
         })
 
         if (!user?.passwordHash) return null
@@ -54,14 +54,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id
-        token.role = (user as any).role
+        token.role = user.role
       }
       return token
     },
     session: async ({ session, token }) => {
       if (session.user) {
-        session.user.id = token.id as string
-        session.user.role = token.role as string
+        if (token.id) session.user.id = token.id
+        if (token.role) session.user.role = token.role
       }
       return session
     },

@@ -2,6 +2,7 @@
   "name": "@prelegal/worker",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
@@ -17,9 +18,12 @@
     "@prelegal/document-engine": "workspace:*",
     "@prelegal/shared": "workspace:*",
     "@prelegal/template-engine": "workspace:*",
+    "@prelegal/validation": "workspace:*",
+    "@prisma/client": "^5.13.0",
     "bullmq": "^5.7.0",
     "ioredis": "^5.3.2",
-    "pdfkit": "^0.15.0"
+    "pdfkit": "^0.15.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",

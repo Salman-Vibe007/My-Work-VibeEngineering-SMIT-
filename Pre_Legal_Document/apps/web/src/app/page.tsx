@@ -58,7 +58,7 @@ export default function HomePage() {
               startups, and legal professionals. No legal expertise required.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/auth/signup">
+              <Link href="/signup">
                 <Button size="lg" className="w-full sm:w-auto gap-2">
                   Start Free — No Credit Card
                   <ArrowRight className="h-4 w-4" />
@@ -207,7 +207,7 @@ export default function HomePage() {
           <p className="text-lg text-primary-100 max-w-2xl mx-auto mb-8">
             Join thousands of professionals who trust Pre Legal Document Generator for their document needs.
           </p>
-          <Link href="/auth/signup">
+          <Link href="/signup">
             <Button size="lg" variant="secondary" className="gap-2">
               Get Started Free
               <ArrowRight className="h-4 w-4" />

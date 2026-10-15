@@ -86,7 +86,7 @@ export interface FieldValidation {
 export interface ConditionalLogic {
   field: string
   operator: 'equals' | 'notEquals' | 'contains' | 'notContains' | 'isEmpty' | 'isNotEmpty'
-  value: unknown
+  value?: unknown
 }
 
 export interface TemplateSection {
