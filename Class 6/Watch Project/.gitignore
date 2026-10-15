@@ -1,0 +1,20 @@
+# Dependencies
+frontend/node_modules/
+frontend/.next/
+
+# Environment and secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Vercel
+**/.vercel/
+
+# Logs and local files
+npm-debug.log*
+yarn-debug.log*
+*.log
+.DS_Store
+
+# Local Git metadata from the previous frontend-only repository
+frontend/.git/
