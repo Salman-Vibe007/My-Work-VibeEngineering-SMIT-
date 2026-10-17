@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: ..
+      context: .
       dockerfile: docker/app/Dockerfile
     restart: unless-stopped
     env_file:

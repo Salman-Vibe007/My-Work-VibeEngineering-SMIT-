@@ -7,7 +7,7 @@
   "installCommand": "pnpm install",
   "regions": ["iad1"],
   "functions": {
-    "apps/web/src/app/api/**/*.ts": {
+    "frontend/web/src/app/api/**/*.ts": {
       "maxDuration": 30
     }
   },

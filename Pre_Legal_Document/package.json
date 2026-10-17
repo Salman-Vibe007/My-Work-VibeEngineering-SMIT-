@@ -16,14 +16,16 @@
     "db:seed": "turbo run db:seed --filter=@prelegal/database",
     "db:studio": "turbo run db:studio --filter=@prelegal/database",
     "format": "prettier --write \"**/*.{ts,tsx,json,md,yml,yaml}\"",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "prisma skills sync || exit 0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "prettier": "^3.2.5",
     "turbo": "^2.0.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "prisma": "8.0.0-rc.23"
   },
   "engines": {
     "node": ">=20.0.0"

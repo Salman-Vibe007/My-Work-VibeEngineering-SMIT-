@@ -6,19 +6,19 @@ RUN corepack enable
 # Install dependencies
 FROM base AS dependencies
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY packages/database/package.json ./packages/database/
-COPY packages/shared/package.json ./packages/shared/
-COPY packages/validation/package.json ./packages/validation/
-COPY packages/ui/package.json ./packages/ui/
-COPY packages/template-engine/package.json ./packages/template-engine/
-COPY packages/document-engine/package.json ./packages/document-engine/
-COPY apps/web/package.json ./apps/web/
-COPY apps/worker/package.json ./apps/worker/
+COPY backend/packages/database/package.json ./backend/packages/database/
+COPY backend/packages/shared/package.json ./backend/packages/shared/
+COPY backend/packages/validation/package.json ./backend/packages/validation/
+COPY backend/packages/ui/package.json ./backend/packages/ui/
+COPY backend/packages/template-engine/package.json ./backend/packages/template-engine/
+COPY backend/packages/document-engine/package.json ./backend/packages/document-engine/
+COPY frontend/web/package.json ./frontend/web/
+COPY backend/worker/package.json ./backend/worker/
 RUN pnpm install --frozen-lockfile
 
 # Generate Prisma Client
 FROM dependencies AS prisma-generate
-COPY packages/database/prisma ./packages/database/prisma/
+COPY backend/packages/database/prisma ./backend/packages/database/prisma/
 RUN pnpm db:generate --filter=@prelegal/database
 
 # Build all packages
@@ -34,11 +34,11 @@ ENV NODE_ENV=production
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Copy built application
-COPY --from=builder --chown=appuser:appgroup /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=appuser:appgroup /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder --chown=appuser:appgroup /app/apps/web/public ./apps/web/public
-COPY --from=builder --chown=appuser:appgroup /app/packages/database/prisma ./packages/database/prisma
+COPY --from=builder --chown=appuser:appgroup /app/frontend/web/.next/standalone ./
+COPY --from=builder --chown=appuser:appgroup /app/frontend/web/.next/static ./frontend/web/.next/static
+COPY --from=builder --chown=appuser:appgroup /app/frontend/web/public ./frontend/web/public
+COPY --from=builder --chown=appuser:appgroup /app/backend/packages/database/prisma ./backend/packages/database/prisma
 
 USER appuser
 EXPOSE 3000
-CMD ["node", "apps/web/server.js"]
+CMD ["node", "frontend/web/server.js"]

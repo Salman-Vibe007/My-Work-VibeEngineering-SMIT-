@@ -1,0 +1,35 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "baseUrl": "./",
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@prelegal/shared/*": ["../../backend/packages/shared/src/*"],
+      "@prelegal/validation/*": ["../../backend/packages/validation/src/*"],
+      "@prelegal/ui/*": ["../../backend/packages/ui/src/*"],
+      "@prelegal/template-engine/*": ["../../backend/packages/template-engine/src/*"],
+      "@prelegal/document-engine/*": ["../../backend/packages/document-engine/src/*"],
+      "@prelegal/database/*": ["../../backend/packages/database/src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

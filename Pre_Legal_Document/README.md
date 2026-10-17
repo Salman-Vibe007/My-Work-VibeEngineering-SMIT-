@@ -61,10 +61,9 @@ save versions, and export the result to commonly used formats. The
 platform is designed around privacy, clear review steps, versioned
 templates, and a bright, approachable interface.
 
-This README defines a **recommended product specification and
-implementation blueprint**. Features and commands described here should
-be considered planned or illustrative until implemented and verified in
-the repository.
+This README combines the product goals with the currently implemented
+application. Check the sections below for the implemented workflows and
+the production services that still need configuration.
 
 ### Goals
 
@@ -431,32 +430,29 @@ jobs justify it.
 
 ## Frontend and backend layout
 
-The workspace keeps the browser application and background processing in
-separate app folders. The Next.js app also owns its HTTP API routes as a
-modular-monolith backend; the worker handles asynchronous PDF and DOCX
-exports. Shared business logic lives in `packages/`.
+The workspace groups the browser application under `frontend/` and
+background processing plus shared services under `backend/`. The Next.js
+app also owns its HTTP API routes as a modular-monolith backend; the worker
+handles asynchronous PDF and DOCX exports.
 
 ``` text
 pre-legal-document-generator/
-├── apps/
-│   ├── web/
-│   │   └── src/
-│   │       ├── app/            # Frontend pages and /api route handlers
-│   │       ├── components/
-│   │       ├── lib/
-│   │       └── types/
-│   └── worker/
-│       ├── src/                # Redis/BullMQ worker and export processor
-│       └── tests/
-├── packages/
-│   ├── database/
-│   │   ├── prisma/
-│   │   └── src/
-│   ├── document-engine/
-│   ├── template-engine/
-│   ├── ui/
-│   ├── validation/
-│   └── shared/
+├── frontend/
+│   └── web/
+│       └── src/                # UI pages and /api route handlers
+├── backend/
+│   ├── worker/
+│   │   ├── src/                # Redis/BullMQ worker and export processor
+│   │   └── tests/
+│   └── packages/
+│       ├── database/
+│       │   ├── prisma/
+│       │   └── src/
+│       ├── document-engine/
+│       ├── template-engine/
+│       ├── ui/
+│       ├── validation/
+│       └── shared/
 ├── docker/
 ├── docs/
 ├── scripts/
@@ -471,6 +467,8 @@ pre-legal-document-generator/
 The API route handlers remain in the web app so authenticated browser
 requests can share NextAuth sessions. The worker can be run separately
 with `pnpm --filter @prelegal/worker dev` and requires `REDIS_URL`.
+Shared workspace packages (database, engines, validation, UI, and shared
+utilities) live in `backend/packages/`.
 
 ## Database design
 
@@ -632,11 +630,11 @@ clear, professional, and easy to navigate.
 
 ### 1. Clone the repository
 
-Replace the URL with the actual repository location:
+Clone the project repository:
 
 ``` bash
-git clone https://github.com/YOUR_USERNAME/pre-legal-document-generator.git
-cd pre-legal-document-generator
+git clone https://github.com/Salman-Vibe007/My-Work-VibeEngineering-SMIT-.git
+cd My-Work-VibeEngineering-SMIT-/Pre_Legal_Document
 ```
 
 ### 2. Install dependencies
@@ -656,39 +654,62 @@ Use the repository's lockfile and package manager consistently.
 cp .env.example .env
 ```
 
-Fill in required local values. Never commit `.env`, production
-credentials, or real customer documents.
+Set `DATABASE_URL`, `AUTH_SECRET`, and `APP_URL`. To send password-reset
+emails, also configure a Resend `EMAIL_API_KEY`, a verified `EMAIL_FROM`,
+and `EMAIL_PROVIDER=resend`. Never commit `.env`, production credentials,
+or real customer documents.
 
 ### 4. Start infrastructure
 
-If the Compose file defines `db` and `redis` services:
+Start the local PostgreSQL and Redis services from the app Compose file:
 
 ``` bash
-docker compose up -d db redis
+docker compose -f docker/app/docker-compose.yml up -d db redis
 ```
 
-Service names must match the actual `compose.yaml`.
+The `db` and `redis` services use the ports configured in `.env`.
 
 ### 5. Run database commands
 
-Example commands for a project that defines these scripts:
+Generate Prisma Client, synchronize the schema for local development,
+and optionally seed the template catalog:
 
 ``` bash
-pnpm db:generate
-pnpm db:migrate
-pnpm db:seed
+pnpm --filter @prelegal/database db:generate
+pnpm --filter @prelegal/database db:push
+pnpm --filter @prelegal/database db:seed
 ```
 
-The seed step is optional. These scripts must be implemented in
-`package.json` before they can be used.
+The seed step creates example plans, users, and published templates. Use
+its demo credentials only in a disposable local environment.
 
 ### 6. Start the application
 
 ``` bash
-pnpm dev
+pnpm --filter @prelegal/web dev
 ```
 
-Open `http://localhost:3000` if that is the configured development port.
+Open `http://localhost:3000`; the sign-in page is
+`http://localhost:3000/signin`.
+To process PDF/DOCX jobs in a second terminal, start the worker after Redis
+is ready:
+
+``` bash
+pnpm --filter @prelegal/worker dev
+```
+
+### Implemented workflows
+
+- Browse published templates and create a draft document.
+- Save document revisions automatically, review a rendered preview, and
+  mark documents complete or move them to the trash.
+- Update profile, language, and preferred jurisdiction in settings.
+- Request PDF/DOCX exports. The worker requires `REDIS_URL` and must run
+  as a separate service; generated exports are available from the
+  authenticated download endpoint.
+- Reset passwords through one-time, expiring email links. This workflow
+  requires the email settings above; requests return a configuration
+  error if mail delivery is not configured.
 
 ### Typical package scripts
 

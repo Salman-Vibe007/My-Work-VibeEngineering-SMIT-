@@ -67,7 +67,6 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm db:generate
-        working-directory: ./apps/web
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
@@ -103,7 +102,6 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm db:generate
-        working-directory: ./apps/web
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
