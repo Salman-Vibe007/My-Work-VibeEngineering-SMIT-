@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@prelegal/database'
 
-export async function POST(request: Request) {
+async function resetUsage(request: Request) {
   try {
+    const cronSecret = process.env.CRON_SECRET
     const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: 'Invalid cron secret' }, { status: 401 })
     }
 
@@ -35,3 +36,6 @@ export async function POST(request: Request) {
     )
   }
 }
+
+export const GET = resetUsage
+export const POST = resetUsage

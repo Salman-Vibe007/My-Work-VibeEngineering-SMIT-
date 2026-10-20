@@ -1,262 +1,148 @@
 import Link from 'next/link'
-import { Button } from '@prelegal/ui'
-import { FileText, Shield, Zap, Users, CheckCircle, ArrowRight } from 'lucide-react'
+import {
+  ArrowDownRight,
+  ArrowRight,
+  Check,
+  ChevronRight,
+  FileCheck2,
+  FileText,
+  Menu,
+  ShieldCheck,
+} from 'lucide-react'
 
-const features = [
+const templateGroups = [
   {
-    icon: FileText,
-    title: 'Smart Templates',
-    description: 'Versioned, jurisdiction-aware templates with guided forms and conditional logic.',
+    number: '01',
+    category: 'Business',
+    examples: ['Service agreements', 'Confidentiality agreements', 'Consulting terms'],
+    tone: 'mint',
   },
   {
-    icon: Shield,
-    title: 'Secure & Private',
-    description: 'End-to-end encryption, granular permissions, and full data ownership.',
+    number: '02',
+    category: 'Work & freelance',
+    examples: ['Offer letters', 'Project agreements', 'Payment terms'],
+    tone: 'blue',
   },
   {
-    icon: Zap,
-    title: 'AI-Assisted Drafting',
-    description: 'Optional AI suggestions for clarity, tone, and completeness with full user control.',
+    number: '03',
+    category: 'Personal & property',
+    examples: ['Authorization letters', 'Rental notices', 'Declarations'],
+    tone: 'coral',
   },
-  {
-    icon: Users,
-    title: 'Team Workspaces',
-    description: 'Collaborate with role-based access, shared templates, and centralized billing.',
-  },
-]
-
-const templates = [
-  { category: 'Business', count: 12, examples: ['Service Agreements', 'NDAs', 'Consulting Agreements'] },
-  { category: 'Employment', count: 8, examples: ['Offer Letters', 'Employment Agreements', 'Warning Letters'] },
-  { category: 'Freelancing', count: 6, examples: ['Freelance Contracts', 'Project Agreements', 'Payment Terms'] },
-  { category: 'Personal', count: 10, examples: ['Authorization Letters', 'Declarations', 'Consent Letters'] },
-  { category: 'Property', count: 7, examples: ['Rental Agreements', 'Notices', 'Property Letters'] },
-  { category: 'Disputes', count: 5, examples: ['Demand Letters', 'Breach Notices', 'Settlement Proposals'] },
 ]
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-neutral-50 to-white py-20 lg:py-32">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 text-primary-700 text-sm font-medium mb-8">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
-              </span>
-              Now in Public Beta
-            </div>
-            <h1 className="text-4xl lg:text-6xl font-bold tracking-tight text-text-primary mb-6">
-              Create Professional{' '}
-              <span className="text-primary-600">Legal Documents</span>{' '}
-              in Minutes
-            </h1>
-            <p className="text-lg lg:text-xl text-text-secondary max-w-2xl mx-auto mb-10">
-              Guided templates, smart forms, and secure document management for individuals,
-              startups, and legal professionals. No legal expertise required.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/signup">
-                <Button size="lg" className="w-full sm:w-auto gap-2">
-                  Start Free — No Credit Card
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/templates">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                  Browse Templates
-                </Button>
-              </Link>
-            </div>
-            <div className="mt-10 flex items-center justify-center gap-8 text-sm text-text-tertiary">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-success-600" />
-                <span>5 free documents/month</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-success-600" />
-                <span>No credit card required</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-success-600" />
-                <span>Cancel anytime</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 lg:py-28 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-text-primary mb-4">
-              Everything you need for professional documents
-            </h2>
-            <p className="text-lg text-text-secondary">
-              From template selection to final export — a complete document preparation workflow.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="group p-6 rounded-xl border border-border-light bg-background-secondary hover:border-primary-300 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 text-primary-600 mb-4 group-hover:bg-primary-600 group-hover:text-white transition-colors">
-                  <feature.icon className="h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-semibold text-text-primary mb-2">{feature.title}</h3>
-                <p className="text-text-secondary">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Template Categories */}
-      <section className="py-20 lg:py-28 bg-neutral-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-text-primary mb-4">
-              Templates for every situation
-            </h2>
-            <p className="text-lg text-text-secondary">
-              48+ professionally structured templates across 6 categories, with more added weekly.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates.map((template, index) => (
-              <div
-                key={index}
-                className="p-6 rounded-xl border border-border-light bg-background-secondary hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-text-primary">{template.category}</h3>
-                    <p className="text-sm text-text-tertiary">{template.count} templates</p>
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-primary-100 text-primary-700 text-xs font-medium">
-                    {template.count}
-                  </span>
-                </div>
-                <ul className="space-y-2">
-                  {template.examples.map((example, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-text-secondary">
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary-400" />
-                      {example}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <Link href="/templates">
-              <Button variant="outline" size="lg">
-                View All Templates
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="py-20 lg:py-28 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-text-primary mb-4">
-              From template to final document in 4 steps
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { step: '01', title: 'Choose Template', description: 'Browse 48+ templates by category or search by keyword' },
-              { step: '02', title: 'Answer Questions', description: 'Guided form with validation and conditional fields' },
-              { step: '03', title: 'Review & Edit', description: 'Rich-text editor with AI suggestions and version history' },
-              { step: '04', title: 'Export & Share', description: 'PDF/DOCX export with secure sharing links' },
-            ].map((item, index) => (
-              <div key={index} className="relative">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary-600 text-white font-bold text-lg">
-                    {item.step}
-                  </span>
-                </div>
-                <div className="pt-6 text-center">
-                  <h3 className="text-lg font-semibold text-text-primary mb-2">{item.title}</h3>
-                  <p className="text-text-secondary">{item.description}</p>
-                </div>
-                {index < 3 && (
-                  <div className="absolute top-0 right-0 w-full h-px bg-gradient-to-r from-primary-200 to-transparent hidden lg:block" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 lg:py-28 bg-primary-600">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            Ready to create your first document?
-          </h2>
-          <p className="text-lg text-primary-100 max-w-2xl mx-auto mb-8">
-            Join thousands of professionals who trust Pre Legal Document Generator for their document needs.
-          </p>
-          <Link href="/signup">
-            <Button size="lg" variant="secondary" className="gap-2">
-              Get Started Free
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+    <main className="home-page">
+      <header className="site-header">
+        <nav className="site-nav page-shell" aria-label="Main navigation">
+          <Link href="/" className="brand" aria-label="Prelegal home">
+            <span className="brand-mark"><FileCheck2 size={19} strokeWidth={2.2} /></span>
+            <span>prelegal<span className="brand-period">.</span></span>
           </Link>
+          <div className="nav-links">
+            <Link href="#how-it-works">How it works</Link>
+            <Link href="/templates">Templates</Link>
+          </div>
+          <div className="nav-actions">
+            <Link href="/signin" className="sign-in-link">Sign in</Link>
+            <Link href="/signup" className="nav-cta">Get started <ArrowRight size={15} /></Link>
+          </div>
+          <Link href="/templates" className="mobile-menu" aria-label="Browse templates"><Menu size={20} /></Link>
+        </nav>
+      </header>
+
+      <section className="hero page-shell">
+        <div className="hero-copy">
+          <p className="eyebrow"><span className="eyebrow-dot" /> DOCUMENT PREPARATION, MADE CLEAR</p>
+          <h1>The first draft shouldn’t be the <em>hardest</em> part.</h1>
+          <p className="hero-description">
+            Start with a guided template, shape it around your situation, and review every detail before you export.
+          </p>
+          <div className="hero-actions">
+            <Link href="/signup" className="button-primary">Start a draft <ArrowRight size={17} /></Link>
+            <Link href="/templates" className="button-text">Explore templates <ArrowDownRight size={17} /></Link>
+          </div>
+          <p className="hero-note"><ShieldCheck size={15} /> You stay in control of every word.</p>
+        </div>
+
+        <div className="preview-stage" aria-label="Illustration of a document draft ready for review">
+          <div className="preview-orbit orbit-one" />
+          <div className="preview-orbit orbit-two" />
+          <div className="document-window">
+            <div className="window-bar">
+              <span className="window-dots"><i /><i /><i /></span>
+              <span className="window-label">YOUR WORKSPACE</span>
+              <span className="save-status"><span /> Saved</span>
+            </div>
+            <div className="document-layout">
+              <aside className="document-rail" aria-hidden="true">
+                <span className="rail-icon rail-active"><FileText size={16} /></span>
+                <span className="rail-icon"><Check size={16} /></span>
+              </aside>
+              <div className="document-content">
+                <div className="document-meta"><span>BUSINESS</span><span>·</span><span>UNITED STATES</span></div>
+                <h2>Service agreement</h2>
+                <p className="document-subtitle">A working draft for your review</p>
+                <div className="document-rule" />
+                <p className="paper-heading">01 &nbsp; The parties</p>
+                <p className="paper-copy">This agreement is between <b>Client name</b> and <b>Service provider</b>, starting on <b>Effective date</b>.</p>
+                <p className="paper-heading">02 &nbsp; Scope of work</p>
+                <p className="paper-copy">Describe the services, deliverables, and timing that both parties have discussed.</p>
+                <div className="field-callout"><span className="callout-icon"><Check size={13} /></span><span><b>Review before exporting</b><small>3 fields still need your attention</small></span><ChevronRight size={15} /></div>
+              </div>
+            </div>
+          </div>
+          <div className="floating-note"><span className="note-check"><Check size={14} /></span><span><b>Your draft, your call</b><small>Edit everything before export</small></span></div>
+          <span className="preview-caption">A clearer path from blank page to first draft.</span>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 bg-neutral-900 text-white">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="font-semibold text-lg mb-4">Pre Legal Document Generator</h3>
-              <p className="text-neutral-400 text-sm">
-                Professional document preparation made simple. Create, customize, and manage legal documents with confidence.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-neutral-400">
-                <li><Link href="/templates" className="hover:text-white">Templates</Link></li>
-                <li><Link href="/pricing" className="hover:text-white">Pricing</Link></li>
-                <li><Link href="/features" className="hover:text-white">Features</Link></li>
-                <li><Link href="/docs" className="hover:text-white">Documentation</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-medium mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-neutral-400">
-                <li><Link href="/about" className="hover:text-white">About</Link></li>
-                <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
-                <li><Link href="/careers" className="hover:text-white">Careers</Link></li>
-                <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-medium mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-neutral-400">
-                <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="hover:text-white">Terms of Service</Link></li>
-                <li><Link href="/disclaimer" className="hover:text-white">Legal Disclaimer</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-neutral-800 pt-8 text-center text-sm text-neutral-400">
-            <p>© 2024 Pre Legal Document Generator. All rights reserved.</p>
+      <section className="workflow-strip" id="how-it-works">
+        <div className="page-shell workflow-inner">
+          <div className="workflow-heading"><span>LESS BLANK PAGE.</span><span>MORE FORWARD MOMENTUM.</span></div>
+          <div className="workflow-steps">
+            <div className="workflow-step"><span className="step-number">01</span><span><b>Choose a starting point</b><small>Find a template for the job at hand.</small></span></div>
+            <div className="step-connector" aria-hidden="true" />
+            <div className="workflow-step"><span className="step-number">02</span><span><b>Fill in what matters</b><small>Answer clear questions, one step at a time.</small></span></div>
+            <div className="step-connector" aria-hidden="true" />
+            <div className="workflow-step"><span className="step-number">03</span><span><b>Review your draft</b><small>Check the details and make it your own.</small></span></div>
           </div>
         </div>
+      </section>
+
+      <section className="templates-section page-shell" id="templates">
+        <div className="section-heading">
+          <div><p className="eyebrow">A PLACE TO BEGIN</p><h2>Useful structure.<br /><em>Your words.</em></h2></div>
+          <div className="section-aside"><p>Explore a starting point for everyday business, work, and personal paperwork.</p><Link href="/templates" className="button-text">Browse the library <ArrowRight size={16} /></Link></div>
+        </div>
+        <div className="template-list">
+          {templateGroups.map((group) => (
+            <Link href="/templates" className={`template-row template-${group.tone}`} key={group.number}>
+              <span className="template-number">{group.number}</span>
+              <span className="template-title">{group.category}</span>
+              <span className="template-examples">{group.examples.join('  ·  ')}</span>
+              <span className="template-arrow" aria-hidden="true"><ArrowRight size={19} /></span>
+            </Link>
+          ))}
+        </div>
+        <p className="catalog-note"><ShieldCheck size={15} /> Template availability and jurisdiction vary. Review each template’s details before use.</p>
+      </section>
+
+      <section className="closing-band">
+        <div className="page-shell closing-inner">
+          <div><p className="eyebrow">A GOOD PLACE TO START</p><h2>Make room for the work<br />that comes <em>after</em> the paperwork.</h2></div>
+          <Link href="/templates" className="closing-link">Find your template <ArrowRight size={17} /></Link>
+        </div>
+      </section>
+
+      <footer className="site-footer">
+        <div className="page-shell footer-main">
+          <Link href="/" className="brand footer-brand"><span className="brand-mark"><FileCheck2 size={18} /></span><span>prelegal<span className="brand-period">.</span></span></Link>
+          <p>Thoughtful tools for a clearer first draft.</p>
+          <div className="footer-links"><Link href="/templates">Templates</Link><Link href="/signin">Sign in</Link><Link href="/signup">Create account</Link></div>
+        </div>
+        <div className="page-shell footer-legal"><span>© {new Date().getFullYear()} Prelegal</span><p>Prelegal helps prepare document drafts; it does not provide legal advice or representation. Laws vary by location. Consider consulting a qualified legal professional.</p></div>
       </footer>
     </main>
   )

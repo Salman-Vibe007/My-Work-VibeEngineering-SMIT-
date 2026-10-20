@@ -8,10 +8,10 @@ This guide covers deploying the Pre Legal Document Generator to Vercel with Dock
 - Vercel account
 - GitHub repository
 - PostgreSQL database (Vercel Postgres, Neon, Supabase, or self-hosted)
-- Redis instance (Vercel KV, Upstash, or self-hosted)
+- Redis instance (Upstash or another Redis provider) only if asynchronous PDF/DOCX exports are enabled
 
 ### 2. One-Click Deploy
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-org%2Fpre-legal-document-generator&env=DATABASE_URL,AUTH_SECRET,NEXT_PUBLIC_APP_URL&envDescription=Required%20environment%20variables&envLink=https%3A%2F%2Fgithub.com%2Fyour-org%2Fpre-legal-document-generator%2Fblob%2Fmain%2F.env.production.example)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FSalman-Vibe007%2FMy-Work-VibeEngineering-SMIT-.git&root-directory=Pre_Legal_Document&env=DATABASE_URL,DIRECT_URL,AUTH_SECRET,CRON_SECRET&envDescription=Database,%20authentication,%20and%20scheduled%20job%20secrets)
 
 ### 3. Manual Setup
 
@@ -39,9 +39,12 @@ chmod +x scripts/setup-vercel.sh
 ### Required
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://user:pass@host:5432/db` |
+| `DATABASE_URL` | PostgreSQL runtime connection string (pooled if applicable) | `postgresql://user:pass@host:5432/db` |
+| `DIRECT_URL` | PostgreSQL direct connection used by Prisma; can match `DATABASE_URL` if no pooler is used | `postgresql://user:pass@host:5432/db` |
 | `AUTH_SECRET` | 32+ character random string | `openssl rand -base64 32` |
-| `NEXT_PUBLIC_APP_URL` | Production URL | `https://prelegal.app` |
+| `CRON_SECRET` | Random bearer secret used to authenticate Vercel scheduled jobs | Generate a unique random value |
+
+Set `APP_URL` to the deployed HTTPS origin when password-reset emails are enabled. `REDIS_URL` is only needed for queued document exports, and email credentials are only needed for password-reset delivery.
 
 ### Optional (Services)
 | Variable | Service | Description |
@@ -75,7 +78,7 @@ pnpm db:migrate
 
 # Production (via Vercel CLI)
 vercel env pull .env.production
-pnpm db:migrate
+pnpm --filter @prelegal/database db:migrate:prod
 ```
 
 ## Docker Development
@@ -152,15 +155,16 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) handles:
 
 ### Project Settings
 - **Framework Preset**: Next.js
+- **Root Directory**: `Pre_Legal_Document` when deploying from the repository linked above (the folder containing `pnpm-workspace.yaml` and `vercel.json`). Use `.` only if this folder is the repository root.
 - **Build Command**: `pnpm build`
 - **Output Directory**: `.next` (auto-detected)
-- **Install Command**: `pnpm install`
+- **Install Command**: `pnpm install --frozen-lockfile`
 - **Node Version**: 20.x
 
 ### Environment Variables
-Add all variables from `.env.production.example` to:
+Add the required variables above to:
 - **Production**: Vercel Dashboard > Settings > Environment Variables
-- **Preview**: Same values (or use `vercel env pull`)
+- **Preview**: Use an isolated preview database and a separate `AUTH_SECRET`/`CRON_SECRET`; avoid pointing previews at production document data.
 
 ### Domains
 1. Add custom domain in Vercel Dashboard > Settings > Domains
@@ -172,6 +176,8 @@ Add all variables from `.env.production.example` to:
 Vercel Cron Jobs are configured in `vercel.json`:
 - `cleanup-expired-shares`: Daily at 2 AM UTC
 - `usage-reset`: Monthly on 1st at midnight UTC
+
+Both scheduled routes require `CRON_SECRET`. Vercel sends it as a bearer authorization header when the environment variable is configured.
 
 ## Health Checks
 

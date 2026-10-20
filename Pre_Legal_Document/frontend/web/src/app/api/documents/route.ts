@@ -25,6 +25,24 @@ export async function GET() {
   return NextResponse.json({ documents })
 }
 
+async function hasPremiumTemplates(userId: string): Promise<boolean> {
+  const subscription = await prisma.subscription.findFirst({
+    where: {
+      userId,
+      status: { in: ['ACTIVE', 'TRIALING'] },
+      OR: [{ currentPeriodEnd: null }, { currentPeriodEnd: { gt: new Date() } }],
+    },
+    select: { plan: { select: { features: true } } },
+  })
+  const features = subscription?.plan.features
+  return (
+    typeof features === 'object' &&
+    features !== null &&
+    !Array.isArray(features) &&
+    features.premiumTemplates === true
+  )
+}
+
 export async function POST(request: NextRequest) {
   const session = await auth()
   if (!session?.user?.id) {
@@ -64,23 +82,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'This template requires a premium plan' }, { status: 403 })
     }
 
-    async function hasPremiumTemplates(userId: string): Promise<boolean> {
-      const subscription = await prisma.subscription.findFirst({
-        where: {
-          userId,
-          status: { in: ['ACTIVE', 'TRIALING'] },
-          OR: [{ currentPeriodEnd: null }, { currentPeriodEnd: { gt: new Date() } }],
-        },
-        select: { plan: { select: { features: true } } },
-      })
-      const features = subscription?.plan.features
-      return (
-        typeof features === 'object' &&
-        features !== null &&
-        !Array.isArray(features) &&
-        features.premiumTemplates === true
-      )
-    }
+
 
     const schema = normalizeTemplateSchema(version.schema, {
       slug: template.slug,

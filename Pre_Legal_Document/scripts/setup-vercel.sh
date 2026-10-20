@@ -40,12 +40,14 @@ echo "⚙️  Setting up environment variables..."
 # Required variables
 REQUIRED_VARS=(
     "DATABASE_URL"
+    "DIRECT_URL"
     "AUTH_SECRET"
-    "NEXT_PUBLIC_APP_URL"
+    "CRON_SECRET"
 )
 
 # Optional variables
 OPTIONAL_VARS=(
+    "APP_URL"
     "POSTGRES_PASSWORD"
     "REDIS_URL"
     "REDIS_PASSWORD"

@@ -1,16 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@prelegal/database'
-import { auth } from '@/lib/auth'
 
-export async function POST(request: Request) {
+async function cleanupExpiredShares(request: Request) {
   try {
-    const session = await auth()
-    if (!session?.user || session.user.role !== 'administrator') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
+    const cronSecret = process.env.CRON_SECRET
     const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: 'Invalid cron secret' }, { status: 401 })
     }
 
@@ -39,3 +34,6 @@ export async function POST(request: Request) {
     )
   }
 }
+
+export const GET = cleanupExpiredShares
+export const POST = cleanupExpiredShares

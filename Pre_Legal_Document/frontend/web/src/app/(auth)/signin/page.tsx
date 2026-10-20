@@ -17,7 +17,7 @@ const signInSchema = z.object({
   rememberMe: z.boolean().optional(),
 })
 
-type SignInForm = z.infer<typeof signInSchema>
+type SignInFormData = z.infer<typeof signInSchema>
 
 export default function SignInPage() {
   return (
@@ -43,12 +43,12 @@ function SignInForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignInForm>({
+  } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: { rememberMe: true },
   })
 
-  const onSubmit = async (data: SignInForm) => {
+  const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true)
     setFormError('')
 
