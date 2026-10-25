@@ -1,0 +1,6 @@
+services:
+  finally:
+    build: .
+    ports: ["8000:8000"]
+    env_file: .env
+    volumes: ["./db:/app/db"]      # bind mount (see ARCHITECTURE.md open item #9)

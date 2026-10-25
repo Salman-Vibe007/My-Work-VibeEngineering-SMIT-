@@ -57,3 +57,5 @@ prisma/migrations/.migration_lock.toml
 *.pid
 *.seed
 *.pid.lock
+.vercel
+.env*

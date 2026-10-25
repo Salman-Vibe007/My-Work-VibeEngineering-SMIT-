@@ -4,7 +4,7 @@ const path = require('path')
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    outputFileTracingRoot: path.join(__dirname, '../..'),
+    ...(process.env.VERCEL ? {} : { outputFileTracingRoot: path.join(__dirname, '../..') }),
     serverActions: {
       bodySizeLimit: '2mb',
     },
@@ -18,7 +18,7 @@ const nextConfig = {
       },
     ],
   },
-  output: process.platform === 'win32' ? undefined : 'standalone',
+  output: process.env.VERCEL ? undefined : process.platform === 'win32' ? undefined : 'standalone',
   poweredByHeader: false,
   compress: true,
 }

@@ -1,0 +1,2 @@
+{ "name": "finally-frontend-tests", "private": true, "scripts": { "test": "node --test logic.test.js" },
+  "devDependencies": { "jsdom": "^26.0.0" } }

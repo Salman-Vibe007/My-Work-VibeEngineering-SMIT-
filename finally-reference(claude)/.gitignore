@@ -1,0 +1,10 @@
+.env
+db/finally.db
+__pycache__/
+.venv/
+node_modules/
+frontend/out/
+frontend/.next/
+.claude/settings.local.json
+
+.vercel

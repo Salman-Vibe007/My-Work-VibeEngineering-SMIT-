@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinAlly - AI Trading Workstation</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231F3D2B'/%3E%3Cpath d='M6 22l7-8 5 5 8-11' fill='none' stroke='%23BFA76A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="auth" class="auth" hidden>
+    <div class="auth-card" role="dialog" aria-labelledby="auth-title">
+      <div class="auth-brand"><span class="logo" aria-hidden="true"></span><span id="auth-title" class="brand-name">Fin<b>Ally</b></span></div>
+      <p class="auth-tag">AI Trading Workstation</p>
+      <div class="tabs" role="tablist">
+        <button type="button" id="tab-login" class="tab active" role="tab" aria-selected="true">Log in</button>
+        <button type="button" id="tab-signup" class="tab" role="tab" aria-selected="false">Create account</button>
+      </div>
+      <form id="auth-form" novalidate>
+        <label>Email<input id="au-email" type="email" autocomplete="email" placeholder="you@example.com" maxlength="254"></label>
+        <label>Password
+          <span class="pw"><input id="au-pass" type="password" autocomplete="current-password" maxlength="72"><button type="button" id="au-toggle" class="link">Show</button></span>
+        </label>
+        <label id="au-confirm-wrap" hidden>Confirm password<input id="au-pass2" type="password" autocomplete="new-password" maxlength="72"></label>
+        <p id="au-hint" class="auth-hint" hidden>At least 8 characters.</p>
+        <p id="au-error" class="auth-msg err" role="alert" hidden></p>
+        <p id="au-info" class="auth-msg ok" role="status" hidden></p>
+        <button class="btn btn-gold wide" id="au-submit" type="submit">Log in</button>
+      </form>
+      <p class="auth-foot">Simulated trading with virtual money. Never use real trading credentials here.</p>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <div class="brand"><span class="logo" aria-hidden="true"></span><span class="brand-name">Fin<b>Ally</b></span><span class="brand-sub">AI Trading Workstation</span></div>
+    <div class="stats">
+      <div class="stat"><span class="stat-label">Total value</span><span id="st-total" class="stat-value">--</span></div>
+      <div class="stat"><span class="stat-label">Cash</span><span id="st-cash" class="stat-value">--</span></div>
+      <div class="stat"><span class="stat-label">Unrealized P&amp;L</span><span id="st-pnl" class="stat-value">--</span></div>
+      <div class="status" title="Live price stream"><span id="st-dot" class="dot"></span><span id="st-text">Connecting</span></div>
+      <div class="user" id="user-box" hidden><span id="st-user" class="user-email"></span><button id="btn-logout" class="btn-ghost" type="button">Log out</button></div>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="panel area-wl">
+      <div class="panel-head"><h2>Watchlist</h2><span id="provider" class="chip"></span></div>
+      <form id="wl-form" class="inline-form" autocomplete="off">
+        <input id="wl-input" maxlength="5" placeholder="Add ticker (e.g. NFLX)" aria-label="Add ticker to watchlist">
+        <button class="btn btn-gold" type="submit">Add</button>
+      </form>
+      <ul id="wl" class="wl"></ul>
+    </section>
+
+    <section class="panel area-chart">
+      <div class="panel-head">
+        <div><h2 id="ch-ticker">--</h2><span id="ch-name" class="muted"></span></div>
+        <div class="ch-price"><span id="ch-price">--</span><span id="ch-pct" class="pct">--</span></div>
+      </div>
+      <div id="main-chart" class="chart" role="img" aria-label="Price chart for the selected ticker"></div>
+    </section>
+
+    <section class="panel area-heat">
+      <div class="panel-head"><h2>Portfolio heatmap</h2><span class="muted small">size = value, color = P&amp;L</span></div>
+      <div id="heatmap" class="heatmap"></div>
+    </section>
+
+    <section class="panel area-pnl">
+      <div class="panel-head"><h2>Portfolio value</h2><span class="muted small">dashed = $10,000 start</span></div>
+      <div id="pnl-chart" class="chart small"></div>
+    </section>
+
+    <section class="panel area-pos">
+      <div class="panel-head"><h2>Positions</h2></div>
+      <div class="table-wrap">
+        <table class="tbl"><thead><tr><th>Ticker</th><th>Qty</th><th>Avg cost</th><th>Price</th><th>P&amp;L</th><th>P&amp;L %</th></tr></thead>
+        <tbody id="pos-body"></tbody></table>
+      </div>
+      <p id="pos-empty" class="muted center">No positions yet. Place a trade or ask the AI.</p>
+    </section>
+
+    <section class="panel area-trade">
+      <div class="panel-head"><h2>Trade</h2><span class="muted small">market orders - instant fill</span></div>
+      <form id="trade-form" class="trade" autocomplete="off">
+        <label>Ticker<input id="tr-ticker" maxlength="5" placeholder="AAPL" required></label>
+        <label>Quantity<input id="tr-qty" type="number" min="0" step="any" placeholder="10" required></label>
+        <div class="trade-est" id="tr-est">Estimated: --</div>
+        <div class="trade-btns">
+          <button class="btn btn-buy" type="submit" data-side="buy">Buy</button>
+          <button class="btn btn-sell" type="submit" data-side="sell">Sell</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="panel area-chat">
+      <div class="panel-head"><h2>FinAlly AI</h2><span class="chip">assistant</span></div>
+      <div id="chat-log" class="chat-log" aria-live="polite"></div>
+      <form id="chat-form" class="chat-form" autocomplete="off">
+        <input id="chat-input" placeholder="Ask about your portfolio, or say: buy 5 NVDA" aria-label="Message the AI assistant">
+        <button class="btn btn-gold" type="submit" id="chat-send">Send</button>
+      </form>
+    </aside>
+  </main>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script src="js/logic.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

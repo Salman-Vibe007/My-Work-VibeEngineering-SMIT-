@@ -11,7 +11,7 @@ This guide covers deploying the Pre Legal Document Generator to Vercel with Dock
 - Redis instance (Upstash or another Redis provider) only if asynchronous PDF/DOCX exports are enabled
 
 ### 2. One-Click Deploy
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FSalman-Vibe007%2FMy-Work-VibeEngineering-SMIT-.git&root-directory=Pre_Legal_Document&env=DATABASE_URL,DIRECT_URL,AUTH_SECRET,CRON_SECRET&envDescription=Database,%20authentication,%20and%20scheduled%20job%20secrets)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FSalman-Vibe007%2FMy-Work-VibeEngineering-SMIT-.git&root-directory=Pre_Legal_Document%2Ffrontend%2Fweb&env=DATABASE_URL,DIRECT_URL,AUTH_SECRET,CRON_SECRET&envDescription=Database,%20authentication,%20and%20scheduled%20job%20secrets)
 
 ### 3. Manual Setup
 
@@ -155,11 +155,14 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) handles:
 
 ### Project Settings
 - **Framework Preset**: Next.js
-- **Root Directory**: `Pre_Legal_Document` when deploying from the repository linked above (the folder containing `pnpm-workspace.yaml` and `vercel.json`). Use `.` only if this folder is the repository root.
-- **Build Command**: `pnpm build`
+- **Root Directory**: `Pre_Legal_Document/frontend/web` when deploying from the repository linked above (the folder containing the Next.js `package.json` and `vercel.json`).
+- **Include source files outside the Root Directory**: Enabled (the app imports workspace packages from `Pre_Legal_Document/backend`).
+- **Build Command**: `pnpm --filter @prelegal/database db:generate && pnpm build` (generates the custom-path Prisma client, then builds Next.js from the app root)
 - **Output Directory**: `.next` (auto-detected)
 - **Install Command**: `pnpm install --frozen-lockfile`
-- **Node Version**: 20.x
+- **Node Version**: 22.x
+
+For a manual CLI deployment from `Pre_Legal_Document`, run `pnpm dlx vercel deploy --prod --cwd frontend/web`. The Vercel project must be linked to this app first. The Vercel configuration lives in `frontend/web/vercel.json`, beside the Next.js app.
 
 ### Environment Variables
 Add the required variables above to:
